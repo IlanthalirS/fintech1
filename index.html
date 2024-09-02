@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F8F1F1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .search-export {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .search input {
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search button, .export button, .save-btn {
+            padding: 10px 20px;
+            background-color: #484848;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+        }
+
+        .export select {
+            padding: 10px;
+            margin-right: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #CECECE;
+            font-weight: 600;
+        }
+
+        .action-buttons button {
+            padding: 5px 10px;
+            background-color: #484848;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .action-buttons button:last-child {
+            margin-right: 0;
+        }
+
+        /* Modal styles */
+        .modal, .image-view-modal {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .client-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 10px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .half-width {
+            width: 48%;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        #imageUpload {
+            display: none;
+        }
+
+        /* Image View Modal */
+        #imageViewModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #imageViewModal .modal-content {
+            width: 90%;
+            max-width: 500px;
+        }
+
+        #imageViewModal .close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Client Information Modal -->
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img src="https://via.placeholder.com/100" alt="Client Image" class="client-image" id="clientImage">
+            <input type="file" id="imageUpload" accept="image/*">
+            <form id="clientForm">
+                <input type="text" placeholder="Client Name..." class="full-width">
+                <input type="text" placeholder="Client Ownership..." class="full-width">
+                <div class="row">
+                    <select id="clientSource" class="half-width">
+                        <option value="" disabled selected>Client Source</option>
+                        <option value="referral">Referral</option>
+                        <option value="new_client">New Client</option>
+                    </select>
+                    <input type="date" placeholder="DOB:" id="dob" class="half-width">
+                </div>
+                <h3>About Client :</h3>
+                <div class="row">
+                    <input type="text" placeholder="Pan card" class="half-width">
+                    <input type="text" placeholder="Bank Name" class="half-width">
+                </div>
+                <div class="row">
+                    <input type="email" placeholder="Email ID" class="half-width">
+                    <input type="text" placeholder="Account Number" class="half-width">
+                </div>
+                <div class="row">
+                    <input type="tel" placeholder="Phone No:" class="half-width">
+                    <input type="text" placeholder="IFSC code" class="half-width">
+                </div>
+                <div class="row">
+                    <input type="text" placeholder="Location:" class="half-width">
+                    <input type="text" placeholder="Branch" class="half-width">
+                </div>
+                <div class="row">
+                    <div class="half-width">
+                        <select id="gender">
+                            <option value="" disabled selected>Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="half-width">
+                        <select id="accountType">
+                            <option value="" disabled selected>Account Type</option>
+                            <option value="savings">Savings Account</option>
+                            <option value="current">Current Account</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="save-btn">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image View Modal -->
+    <div id="imageViewModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img src="" alt="Client Image" id="imageView">
+        </div>
+    </div>
+
+    <!-- Accounts Table -->
+    <div class="container">
+        <h1>Accounts</h1>
+        <div class="search-export">
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Search by Client ID, Phone no., E-mail">
+                <button id="searchButton">Search</button>
+            </div>
+            <div class="export">
+                <select id="sortDropdown">
+                    <option value="">Sort by</option>
+                    <option value="oldest">Oldest - Newest</option>
+                    <option value="newest">Newest - Oldest</option>
+                </select>
+                <select id="exportDropdown">
+                    <option value="">Export</option>
+                    <option value="pdf">As PDF</option>
+                    <option value="csv">As CSV</option>
+                </select>
+                <button id="exportButton">Export</button>
+            </div>
+        </div>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
+                    <th>Client ID</th>
+                    <th>Clients</th>
+                    <th>Email</th>
+                    <th>Phone No:</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- User rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="view-profile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeBtn = document.querySelector('.close');
+            const modal = document.querySelector('.modal');
+            const form = document.getElementById('clientForm');
+            const imageUpload = document.getElementById('imageUpload');
+            const clientImage = document.getElementById('clientImage');
+            const imageViewModal = document.getElementById('imageViewModal');
+            const imageView = document.getElementById('imageView');
+
+            // Open Image View Modal
+            clientImage.addEventListener('click', function() {
+                imageView.src = clientImage.src;
+                imageViewModal.style.display = 'flex';
+            });
+
+            // Close Modal
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                imageViewModal.style.display = 'none';
+            });
+
+            window.onclick = function(event) {
+                if (event.target == imageViewModal) {
+                    imageViewModal.style.display = 'none';
+                }
+            };
+
+            // Implement form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted');
+                modal.style.display = 'none';
+            });
+
+            // Image upload logic
+            clientImage.addEventListener('click', function() {
+                imageUpload.click();
+            });
+
+            imageUpload.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        clientImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
